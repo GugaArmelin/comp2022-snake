@@ -24,6 +24,9 @@ public class Board extends JPanel implements ActionListener {
     private Image food;
     private int food_x;
     private int food_y;
+    
+    private int widthGame = 800;
+    private int heightGame = 600;
 
 
     private boolean isPlaying = true;
@@ -82,12 +85,31 @@ public class Board extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         snake.move();
+        checkCollision();
         repaint();  
     }
     
     private void loadFoodImage(){
         ImageIcon iic = new ImageIcon("images/fries.png");
         food = iic.getImage();
+    }
+    
+    private void checkCollision(){
+        if(snake.getX() >= widthGame){
+            isPlaying = false;
+        }
+        if(snake.getX() < 0){
+            isPlaying = false;
+        }
+        if(snake.getY() >= heightGame){
+            isPlaying = false;
+        }
+        if(snake.getY() < 0){
+            isPlaying = false;
+        }
+        if(!isPlaying){
+            timer.stop();
+        }
     }
     
     private void showFood(){
