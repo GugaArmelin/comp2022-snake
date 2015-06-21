@@ -57,16 +57,16 @@ public class Snake extends JPanel
 
     public void move() {
         if(leftDirection == true){
-            x = x - 3;
+            x = x - 10;
         }
         if(rightDirection == true){
-            x = x + 3;
+            x = x + 10;
         }
         if(upDirection == true){
-            y = y - 3;
+            y = y - 10;
         }
         if(downDirection == true){
-            y = y + 3;
+            y = y + 10;
         }
     }
 
