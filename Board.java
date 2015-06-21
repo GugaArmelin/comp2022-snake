@@ -18,26 +18,24 @@ public class Board extends JPanel implements ActionListener {
     private Score score;
     private Snake snake;
     private Body body;
-    
-    
+    private int bodyCount;
+
+
+
     private boolean isPlaying = true;
-
     private Font font;
-    
     public Board() {
-
         addKeyListener(new TAdapter());
-        
         setFocusable(true);        
         setDoubleBuffered(true);
         setBackground(Color.WHITE);
-        
+
         snake = new Snake();
         body = new Body();
 
         score = new Score();
         add(score);       
-        
+
         timer = new Timer(5, this);
         timer.start();
     }
@@ -45,18 +43,17 @@ public class Board extends JPanel implements ActionListener {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        
+
         score.paintComponent(g);
-        
+
         Graphics2D g2d = (Graphics2D)g;        
-        
+
         paintIntro(g);
-        
+
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
-        
-    }
 
+    }
 
     public void paintIntro(Graphics g) {
         if(isPlaying){
@@ -77,37 +74,41 @@ public class Board extends JPanel implements ActionListener {
             g2d.drawImage(body.getImage(),body.getX(),body.getY(),null);
         }
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         snake.move();
         repaint();  
     }
-    
+
     private class TAdapter extends KeyAdapter {
 
         public void keyPressed(KeyEvent e) {
-            
+
             // Obtém o código da tecla
             int key =  e.getKeyCode();
 
             switch (key){
                 case KeyEvent.VK_ENTER:
-                    break;
-                    
+                break;
+
                 case KeyEvent.VK_LEFT:
-                    break;
-                    
-                case KeyEvent.VK_RIGHT:
-                    break;
-                    
+                    snake.setDirection("left");
+                break;
+
+                case KeyEvent.VK_RIGHT :
+                    snake.setDirection("right");
+                break;
+
                 case KeyEvent.VK_UP:
-                    break;
-                    
+                    snake.setDirection("up");
+                break;
+
                 case KeyEvent.VK_DOWN:
-                    break;
+                    snake.setDirection("down");
+                break;
             }
-            
+
         }
     }
-    
+
 }

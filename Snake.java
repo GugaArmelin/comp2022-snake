@@ -18,6 +18,10 @@ public class Snake extends JPanel
     private int x;
     private int y;
     private Image image;
+    private boolean upDirection = false;
+    private boolean downDirection = false;
+    private boolean leftDirection = false;
+    private boolean rightDirection = false;
 
     public Snake() {
         //ImageIcon ii = new ImageIcon("images/"+this.getClass().getResource("head.png"));
@@ -28,9 +32,42 @@ public class Snake extends JPanel
         y = 60;
     }
 
+    public void setDirection(String direction){
+        if(direction == "left" && rightDirection == false ){
+            leftDirection = true; 
+            upDirection = false;
+            downDirection = false;
+        }
+        if(direction == "right" && leftDirection == false){
+            rightDirection = true;
+            upDirection = false;
+            downDirection = false;
+        }
+        if(direction == "up" && downDirection == false){
+            upDirection = true;
+            leftDirection = false;
+            rightDirection = false;  
+        }
+        if(direction == "down" && upDirection == false){
+            downDirection = true;
+            leftDirection = false;
+            rightDirection = false;
+        }
+    }
+
     public void move() {
-        x += dx;
-        y += dy;
+        if(leftDirection == true){
+            x = x - 1;
+        }
+        if(rightDirection == true){
+            x = x + 1;
+        }
+        if(upDirection == true){
+            y = y - 1;
+        }
+        if(downDirection == true){
+            y = y + 1;
+        }
     }
 
     public int getX() {
@@ -41,52 +78,60 @@ public class Snake extends JPanel
         return y;
     }
 
+    public void setY(int _y){
+        y = y+ _y;
+    }
+
+    public void setX(int _x){
+        x = x + _x;
+    }
+
     public Image getImage() {
         return image;
     }
-/**
+    /**
     public void keyPressed(KeyEvent e){
-        int key = e.getKeyCode();
-        
-        switch(key){
-            case KeyEvent.VK_LEFT:
-                dx = -1;
-            break;
-            
-            case KeyEvent.VK_RIGHT:
-                dx = 1;
-            break;
-            
-            case KeyEvent.VK_UP:
-                dy = -1;
-            break;
-            
-            case KeyEvent.VK_DOWN:
-                dy = 1;
-            break;             
-        }
+    int key = e.getKeyCode();
+
+    switch(key){
+    case KeyEvent.VK_LEFT:
+    dx = -1;
+    break;
+
+    case KeyEvent.VK_RIGHT:
+    dx = 1;
+    break;
+
+    case KeyEvent.VK_UP:
+    dy = -1;
+    break;
+
+    case KeyEvent.VK_DOWN:
+    dy = 1;
+    break;             
     }
-    
+    }
+
     public void keyReleased(KeyEvent e){
-        int key = e.getKeyCode();
-        
-        switch(key){
-            case KeyEvent.VK_LEFT:
-                dx = -1;
-            break;
-            
-            case KeyEvent.VK_RIGHT:
-                dx = 1;
-            break;
-            
-            case KeyEvent.VK_UP:
-                dy = -1;
-            break;
-            
-            case KeyEvent.VK_DOWN:
-                dy = 1;
-            break;             
-        }
+    int key = e.getKeyCode();
+
+    switch(key){
+    case KeyEvent.VK_LEFT:
+    dx = -1;
+    break;
+
+    case KeyEvent.VK_RIGHT:
+    dx = 1;
+    break;
+
+    case KeyEvent.VK_UP:
+    dy = -1;
+    break;
+
+    case KeyEvent.VK_DOWN:
+    dy = 1;
+    break;             
     }
-    */
+    }
+     */
 }
