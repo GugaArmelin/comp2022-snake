@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.*;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -19,7 +20,10 @@ public class Board extends JPanel implements ActionListener {
     private Snake snake;
     private Body body;
     private int bodyCount;
-
+    
+    private Image food;
+    private int food_x;
+    private int food_y;
 
 
     private boolean isPlaying = true;
@@ -29,13 +33,13 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);        
         setDoubleBuffered(true);
         setBackground(Color.WHITE);
-
+        loadFoodImage();
         snake = new Snake();
         body = new Body();
 
         score = new Score();
         add(score);       
-
+        showFood();
         timer = new Timer(5, this);
         timer.start();
     }
@@ -59,6 +63,7 @@ public class Board extends JPanel implements ActionListener {
         if(isPlaying){
             //isPlaying = false;
             Graphics2D g2d = (Graphics2D) g;
+            g2d.drawImage(food,food_x,food_y,null);
             try{
                 File file = new File("fonts/VT323-Regular.ttf");
                 font = Font.createFont(Font.TRUETYPE_FONT, file);
@@ -78,6 +83,19 @@ public class Board extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         snake.move();
         repaint();  
+    }
+    
+    private void loadFoodImage(){
+        ImageIcon iic = new ImageIcon("images/fries.png");
+        food = iic.getImage();
+    }
+    
+    private void showFood(){
+        int randomPosition = (int) (Math.random() * 33);
+        food_x = randomPosition * 10;
+
+        randomPosition = (int) (Math.random() * 33);
+        food_y = randomPosition * 10;
     }
 
     private class TAdapter extends KeyAdapter {
