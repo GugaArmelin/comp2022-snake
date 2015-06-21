@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.io.File;
@@ -15,11 +16,14 @@ public class Board extends JPanel implements ActionListener {
 
     private Timer timer;
     private Score score;
+    private Snake snake;
+    private Body body;
     
-    private boolean isPlaying = false;
+    
+    private boolean isPlaying = true;
 
     private Font font;
-       
+    
     public Board() {
 
         addKeyListener(new TAdapter());
@@ -27,6 +31,9 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);        
         setDoubleBuffered(true);
         setBackground(Color.WHITE);
+        
+        snake = new Snake();
+        body = new Body();
 
         score = new Score();
         add(score);       
@@ -35,14 +42,16 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
     }
 
-
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
         
         score.paintComponent(g);
         
         Graphics2D g2d = (Graphics2D)g;        
-
+        
+        paintIntro(g);
+        
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
         
@@ -51,7 +60,7 @@ public class Board extends JPanel implements ActionListener {
 
     public void paintIntro(Graphics g) {
         if(isPlaying){
-            isPlaying = false;
+            //isPlaying = false;
             Graphics2D g2d = (Graphics2D) g;
             try{
                 File file = new File("fonts/VT323-Regular.ttf");
@@ -63,14 +72,16 @@ public class Board extends JPanel implements ActionListener {
             }catch (Exception e){
                 System.out.println(e.toString());
             }   
-            g2d.drawString("S N A K E: " + this.score, 300, 300);
+            //g2d.drawString("S N A K E: " + this.score, 300, 300);
+            g2d.drawImage(snake.getImage(),snake.getX(),snake.getY(),null);
+            g2d.drawImage(body.getImage(),body.getX(),body.getY(),null);
         }
     }
     
-    public void actionPerformed(ActionEvent e) {        
+    public void actionPerformed(ActionEvent e) {
+        snake.move();
         repaint();  
     }
-    
     
     private class TAdapter extends KeyAdapter {
 
@@ -81,7 +92,6 @@ public class Board extends JPanel implements ActionListener {
 
             switch (key){
                 case KeyEvent.VK_ENTER:
-                    score.addScore(100);
                     break;
                     
                 case KeyEvent.VK_LEFT:
@@ -91,11 +101,9 @@ public class Board extends JPanel implements ActionListener {
                     break;
                     
                 case KeyEvent.VK_UP:
-                    score.addScore(10);
                     break;
                     
                 case KeyEvent.VK_DOWN:
-                    score.subScore(-10);
                     break;
             }
             
