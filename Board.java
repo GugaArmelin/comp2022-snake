@@ -18,17 +18,20 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
     private Score score;
     private Snake snake;
+    private int anteriorX;
+    private int anteriorY;
+    private String anteriorDir;
     private Body body;
-    private int bodyCount;
-    private int delay = 140;
-    
+    private int bodyCount = 1;
+    private int delay = 100;
+    private String posAnt;
+
     private Image food;
     private int food_x;
     private int food_y;
-    
+
     private int widthGame = 800;
     private int heightGame = 600;
-
 
     private boolean isPlaying = true;
     private Font font;
@@ -40,10 +43,11 @@ public class Board extends JPanel implements ActionListener {
         loadFoodImage();
         snake = new Snake();
         body = new Body();
-
         score = new Score();
         add(score);       
         showFood();
+
+        initSnake();
         timer = new Timer(delay, this);
         timer.start();
     }
@@ -54,7 +58,7 @@ public class Board extends JPanel implements ActionListener {
 
         score.paintComponent(g);
 
-        Graphics2D g2d = (Graphics2D)g;        
+        Graphics2D g2d = (Graphics2D)g;
 
         paintIntro(g);
 
@@ -65,7 +69,6 @@ public class Board extends JPanel implements ActionListener {
 
     public void paintIntro(Graphics g) {
         if(isPlaying){
-            //isPlaying = false;
             Graphics2D g2d = (Graphics2D) g;
             g2d.drawImage(food,food_x,food_y,null);
             try{
@@ -79,30 +82,118 @@ public class Board extends JPanel implements ActionListener {
                 System.out.println(e.toString());
             }   
             //g2d.drawString("S N A K E: " + this.score, 300, 300);
+            Snake aux = snake.getNext();
             g2d.drawImage(snake.getImage(),snake.getX(),snake.getY(),null);
-            g2d.drawImage(body.getImage(),body.getX(),body.getY(),null);
+            while(aux.getNext()!=null){
+                g2d.drawImage(aux.getImage(),aux.getX(),aux.getY(),null);
+                aux = aux.getNext();
+            }
+
         }
     }
 
+    public void initSnake(){
+        Snake aux = snake;
+        snake.setNext(new Snake(snake.getX() +28, snake.getY()));
+        aux = aux.getNext();
+        aux.setNext(new Snake(aux.getX() +28, aux.getY()));
+        aux = aux.getNext();
+        aux.setNext(new Snake(aux.getX() +28, aux.getY()));
+
+    }
+
     public void actionPerformed(ActionEvent e) {
-        snake.move();
-        checkCollision();
         checkFood();
+        checkCollision();
+
+        Snake aux = snake;
+        //         while(aux.getNext()!=null){
+        //             anteriorDir = aux.getDirection();
+        //             if(anteriorDir.equals("left")){
+        //                 anteriorX = aux.getX() + 28;
+        //             }else if(anteriorDir.equals("right")){
+        //                 anteriorX = aux.getX() - 28;
+        //             }else{
+        //                 anteriorX = aux.getX();
+        //             }
+        //             if(anteriorDir.equals("up")){
+        //                 anteriorY = anteriorY - 28;
+        //             }else if(anteriorDir.equals("down")){
+        //                 anteriorY = anteriorY + 28;
+        //             }else{
+        //                 anteriorY = aux.getY();
+        //             }
+        //             aux.move();
+        //             aux = aux.getNext();
+        //             aux.setX(anteriorX);
+        //             aux.setY(anteriorY);
+        //             aux.setDirection(anteriorDir);
+        //             aux.move();
+        //         }
+
+        snake.move();
+        String posAux = posAnt;
+        String posAux2;
+        while(aux.getNext() != null){
+            if(aux.getDirection().equals("left")){
+                anteriorX = aux.getX() + 28;
+                anteriorY = aux.getY();
+                posAux2 = aux.getDirection();
+                aux = aux.getNext();
+                aux.move();  
+                aux.setX(anteriorX);
+                aux.setY(anteriorY);
+                aux.setDirection(posAux);             
+            }
+            if(aux.getDirection().equals("right")){
+                anteriorX = aux.getX() - 28;
+                anteriorY = aux.getY();
+                posAux2 = aux.getDirection();
+                aux = aux.getNext();
+                aux.move();
+                aux.setX(anteriorX);
+                aux.setY(anteriorY);
+                aux.setDirection(posAux);  
+            }
+            if(aux.getDirection().equals("up")){
+                anteriorX = aux.getX() ;
+                anteriorY = aux.getY() + 28;
+                posAux2 = aux.getDirection();
+                aux = aux.getNext();
+                aux.move();
+                aux.setX(anteriorX);
+                aux.setY(anteriorY);
+                aux.setDirection(posAux);  
+            }
+            if(aux.getDirection().equals("down")){
+                anteriorX = aux.getX() ;
+                anteriorY = aux.getY()- 28;
+                posAux2 = aux.getDirection();
+                aux = aux.getNext();
+                aux.move();
+                aux.setX(anteriorX);
+                aux.setY(anteriorY);
+                aux.setDirection(posAux);  
+            }
+            posAux = posAux;
+        }
+
         repaint();  
     }
-    
+
     private void loadFoodImage(){
         ImageIcon iic = new ImageIcon("images/fries.png");
         food = iic.getImage();
     }
-    
+
     private void checkFood(){
         if((snake.getX() == food_x) && (snake.getY() == food_y)){
-            bodyCount++;
+            addBody();
+            score.addScore(1);
             showFood();
         }
     }
-    
+
     private void checkCollision(){
         if(snake.getX() >= widthGame){
             isPlaying = false;
@@ -120,7 +211,17 @@ public class Board extends JPanel implements ActionListener {
             timer.stop();
         }
     }
-    
+
+    private void addBody(){
+            Snake aux = snake.getNext();
+            while(aux.getNext() != null){
+                aux = aux.getNext();
+            }
+            aux.setNext(new Snake(aux.getX(),aux.getY()));
+            bodyCount++;
+        
+    }
+
     private void showFood(){
         int randomPosition = (int) (Math.random() * 50);
         food_x = randomPosition * 10;
@@ -141,19 +242,23 @@ public class Board extends JPanel implements ActionListener {
                 break;
 
                 case KeyEvent.VK_LEFT:
-                    snake.setDirection("left");
+                snake.setDirection("left");
+                posAnt = snake.getDirection();
                 break;
 
                 case KeyEvent.VK_RIGHT :
-                    snake.setDirection("right");
+                snake.setDirection("right");
+                posAnt = snake.getDirection();
                 break;
 
                 case KeyEvent.VK_UP:
-                    snake.setDirection("up");
+                snake.setDirection("up");
+                posAnt = snake.getDirection();
                 break;
 
                 case KeyEvent.VK_DOWN:
-                    snake.setDirection("down");
+                snake.setDirection("down");
+                posAnt = snake.getDirection();
                 break;
             }
 
